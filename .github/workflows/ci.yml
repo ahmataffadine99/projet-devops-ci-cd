@@ -12,18 +12,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🛎️ Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      # ==========================================
-      # 1. BACKEND (PYTHON)
-      # ==========================================
-      - name: 🐍 Setup Python
+      # Backend Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: 📦 Install Backend dependencies
+      - name: Install Backend dependencies
         working-directory: ./backend
         run: |
           pip install uv
@@ -31,74 +29,66 @@ jobs:
           source .venv/bin/activate
           uv sync
 
-      - name: 🧹 Run Backend linter
+      - name: Run Backend linter
         working-directory: ./backend
         run: |
           source .venv/bin/activate
           uv run ruff check . || echo "Linter failed but continuing"
 
-      - name: 🧪 Run Backend tests & Generate Report
+      - name: Run Backend tests
         working-directory: ./backend
         run: |
           source .venv/bin/activate
           uv run pytest weather/tests/unit --junitxml=test-report.xml
 
-      # ==========================================
-      # 2. FRONTEND (NODE.JS)
-      # ==========================================
-      - name: 🟢 Setup Node.js
+      # Frontend Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24' # On utilise 24 pour la compatibilité avec ESLint 9+
+          node-version: '24'
 
-      - name: 📦 Install Frontend dependencies
+      - name: Install Frontend dependencies
         working-directory: ./frontend
         run: npm install
 
-      - name: 🧹 Run Frontend linter
+      - name: Run Frontend linter
         working-directory: ./frontend
         run: npm run lint --if-present
 
-      - name: 🧪 Run Frontend tests & Generate Report
+      - name: Run Frontend tests
         working-directory: ./frontend
         run: npm run test --if-present
 
-      # ==========================================
-      # 3. SECURITY SCAN (CODE)
-      # ==========================================
-      - name: 🛡️ Run Security Scan (Scorecard)
+      # Security Scan
+      - name: Run Security Scan
         uses: ossf/scorecard-action@v2.4.0
         with:
           results_file: scorecard-results.sarif
           results_format: sarif
           publish_results: false
 
-      # ==========================================
-      # 4. DOCKER BUILD & TRIVY SCAN
-      # ==========================================
-      - name: 🐳 Build Docker image (Backend)
+      # Docker build & Trivy scan
+      - name: Build Backend Docker Image
         working-directory: ./backend
         run: docker build -t myapp-backend:latest .
 
-      - name: 🐳 Build Docker image (Frontend)
+      - name: Build Frontend Docker Image
         working-directory: ./frontend
         run: docker build -t myapp-frontend:latest .
 
-      - name: 🔍 Run Trivy vulnerability scanner (Backend)
+      - name: Run Trivy scanner
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'myapp-backend:latest'
-          format: 'cyclonedx' # Format demandé pour le fichier VEX
+          format: 'cyclonedx'
           output: 'trivy-backend-vex.json'
           vuln-type: 'os,library'
 
-      # ==========================================
-      # 5. PUSH TO REGISTRY (UNIQUEMENT SUR MAIN)
-      # ==========================================
-      - name: 🚀 Push to Docker Registry
+      # Registry Push
+      - name: Push to Docker Registry
         if: github.ref == 'refs/heads/main'
         run: |
-          echo "TODO: Configurer les secrets pour se connecter au registre"
           # docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
           # docker push myapp-backend:latest
           # docker push myapp-frontend:latest
+          echo "Push skipped"
