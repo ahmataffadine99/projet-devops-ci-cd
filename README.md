@@ -1,4 +1,5 @@
 # Valorisation Donnée Météo
+[![CI/CD Pipeline](https://github.com/ahmataffadine99/projet-devops-ci-cd/actions/workflows/ci.yml/badge.svg)](https://github.com/ahmataffadine99/projet-devops-ci-cd/actions/workflows/ci.yml)
 
 Projet Data For Good - Saison 14
 
