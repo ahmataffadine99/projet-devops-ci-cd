@@ -8,6 +8,7 @@ RUN npm install
 
 COPY . .
 
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN npm run build
 
 FROM dhi.io/node:24 AS prod
