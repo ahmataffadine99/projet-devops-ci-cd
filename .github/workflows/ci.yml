@@ -35,15 +35,13 @@ jobs:
         working-directory: ./backend
         run: |
           source .venv/bin/activate
-          # Commande de linter (ex: ruff check .)
-          echo "Running Python linter..." || true
+          uv run ruff check . || echo "Linter failed but continuing"
 
       - name: 🧪 Run Backend tests & Generate Report
         working-directory: ./backend
         run: |
           source .venv/bin/activate
-          # Commande de test (ex: pytest --junitxml=report.xml)
-          echo "Running Python tests..." || true
+          uv run pytest --junitxml=test-report.xml
 
       # ==========================================
       # 2. FRONTEND (NODE.JS)
