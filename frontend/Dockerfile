@@ -1,4 +1,4 @@
-FROM dhi.io/node:24 AS build
+FROM dhi.io/node:24-dev AS build
 
 WORKDIR /app
 

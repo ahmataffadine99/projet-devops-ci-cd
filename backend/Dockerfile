@@ -1,4 +1,4 @@
-FROM dhi.io/python:3.12 AS builder
+FROM dhi.io/python:3.12-dev AS builder
 
 COPY --from=ghcr.io/astral-sh/uv:0.10.0 /uv /uvx /bin/
 
