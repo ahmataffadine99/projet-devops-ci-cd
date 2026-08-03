@@ -51,7 +51,7 @@ jobs:
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # On utilise 20 ici pour plus de compatibilité sur les runners GitHub Actions
+          node-version: '24' # On utilise 24 pour la compatibilité avec ESLint 9+
 
       - name: 📦 Install Frontend dependencies
         working-directory: ./frontend
