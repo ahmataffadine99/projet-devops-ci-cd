@@ -57,7 +57,7 @@ jobs:
 
       - name: Run Frontend tests
         working-directory: ./frontend
-        run: npm run test --if-present
+        run: npm run test:unit --if-present
 
       # Security Scan
       - name: Run Security Scan
@@ -92,3 +92,15 @@ jobs:
           # docker push myapp-backend:latest
           # docker push myapp-frontend:latest
           echo "Push skipped"
+
+      # Upload Artifacts
+      - name: Upload Deliverable Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: project-deliverables
+          path: |
+            backend/test-report.xml
+            scorecard-results.sarif
+            trivy-backend-vex.json
+          retention-days: 14
