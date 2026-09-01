@@ -61,7 +61,7 @@ jobs:
 
       # Security Scan
       - name: Run Security Scan
-        uses: ossf/scorecard-action@v2.4.0
+        uses: ossf/scorecard-action@main
         with:
           results_file: scorecard-results.sarif
           results_format: sarif
