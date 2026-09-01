@@ -239,4 +239,4 @@ npm ci
 
 - **Backend** : Ruff (linting + formatting) + pytest sur `weather/tests/unit`
 - **Frontend** : ESLint + Prettier
-- **Commun** : vérification des conflits, fins de ligne, etc.
+- **Commun** : vérification des conflits, fins de ligne, etc..
