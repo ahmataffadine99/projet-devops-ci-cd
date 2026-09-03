@@ -10,6 +10,9 @@ jobs:
   build-test-and-scan:
     name: Build, Test and Scan
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: Checkout code
@@ -76,7 +79,7 @@ jobs:
         working-directory: ./frontend
         run: docker build -t myapp-frontend:latest .
 
-      - name: Run Trivy scanner
+      - name: Run Trivy scanner (Backend)
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'myapp-backend:latest'
@@ -84,14 +87,23 @@ jobs:
           output: 'trivy-backend-vex.json'
           vuln-type: 'os,library'
 
+      - name: Run Trivy scanner (Frontend)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'myapp-frontend:latest'
+          format: 'cyclonedx'
+          output: 'trivy-frontend-vex.json'
+          vuln-type: 'os,library'
+
       # Registry Push
-      - name: Push to Docker Registry
+      - name: Push to Docker Registry (ghcr.io)
         if: github.ref == 'refs/heads/main'
         run: |
-          # docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
-          # docker push myapp-backend:latest
-          # docker push myapp-frontend:latest
-          echo "Push skipped"
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker tag myapp-backend:latest ghcr.io/${{ github.repository }}/myapp-backend:latest
+          docker tag myapp-frontend:latest ghcr.io/${{ github.repository }}/myapp-frontend:latest
+          docker push ghcr.io/${{ github.repository }}/myapp-backend:latest
+          docker push ghcr.io/${{ github.repository }}/myapp-frontend:latest
 
       # Upload Artifacts
       - name: Upload Deliverable Artifacts
@@ -103,4 +115,5 @@ jobs:
             backend/test-report.xml
             scorecard-results.sarif
             trivy-backend-vex.json
+            trivy-frontend-vex.json
           retention-days: 14
